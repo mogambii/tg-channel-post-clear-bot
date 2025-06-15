@@ -1,0 +1,18 @@
+{
+  "name": "tg-channel-post-clear-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot to clear messages in channels",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "telegraf": "^4.15.3",
+    "dotenv": "^16.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+} 
