@@ -149,6 +149,7 @@ bot.on('message', async (ctx) => {
         // Check if user is owner or admin
         const isOwner = channel.creator;
         const isAdmin = participant?.adminRights;
+        console.log(isOwner, isAdmin);
         
         if (!isOwner && !isAdmin) {
             await ctx.reply('You must be an administrator or owner in the channel to clear messages.');
