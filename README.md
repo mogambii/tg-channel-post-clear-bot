@@ -1,30 +1,50 @@
 # Telegram Channel Message Clear Bot
 
-A Telegram bot that helps clear messages in channels. The bot supports multiple users simultaneously and includes safety checks to ensure only channel administrators can clear messages.
+A Telegram bot that helps clear messages in channels. This bot uses a userbot in the background to delete messages, which allows it to delete older messages that regular bots cannot delete.
 
 ## Features
 
 - Clear messages in channels before a specific point
 - Support for multiple users simultaneously
+- Can delete older messages that regular bots cannot delete
 - Safety checks for administrator permissions
-- Custom API server support to remove rate limits
 - Progress updates during message deletion
 - Session management for each user
 
 ## Setup
 
-1. Create a new bot using [@BotFather](https://t.me/BotFather) on Telegram
-2. Get your bot token from BotFather
-3. Clone this repository
-4. Install dependencies:
+1. Get your API credentials:
+   - Go to https://my.telegram.org/auth
+   - Log in with your phone number
+   - Go to 'API development tools'
+   - Create a new application
+   - Note down your `api_id` and `api_hash`
+
+2. Create a new bot:
+   - Message [@BotFather](https://t.me/BotFather) on Telegram
+   - Use the `/newbot` command to create a new bot
+   - Follow the instructions and get your bot token
+
+3. Install dependencies:
    ```bash
    npm install
    ```
-5. Create a `.env` file in the root directory and add your bot token and API server URL:
+
+4. Create a `.env` file in the root directory with your credentials:
    ```
-   BOT_TOKEN=your_bot_token_here
-   API_SERVER_URL=your_custom_api_server_url_here
+   API_ID=your_api_id
+   API_HASH=your_api_hash
+   BOT_TOKEN=your_bot_token
    ```
+
+5. Generate a session:
+   ```bash
+   npm run generate-session
+   ```
+   - Follow the prompts to enter your phone number and verification code
+   - Copy the generated session string
+   - Add it to your `.env` file as `TELEGRAM_SESSION=your_session_string`
+
 6. Start the bot:
    ```bash
    npm start
@@ -41,12 +61,10 @@ A Telegram bot that helps clear messages in channels. The bot supports multiple 
 
 ## Requirements
 
-- Node.js 12 or higher
-- npm or yarn
+- Node.js 16 or higher
+- Telegram API credentials (api_id and api_hash)
 - Telegram Bot Token
-- Custom API Server URL (optional, but recommended for removing rate limits)
-- Bot must be an administrator in the target channel
-- User must be an administrator in the target channel
+- Telegram account with admin rights in the target channel
 
 ## Safety Features
 
@@ -56,22 +74,17 @@ A Telegram bot that helps clear messages in channels. The bot supports multiple 
 - Session management to prevent conflicts
 - Error handling for various scenarios
 
+## Important Notes
+
+1. The bot uses a userbot in the background to delete messages
+2. Be careful with the session string - anyone with it can access your account
+3. The bot can delete older messages that regular bots cannot delete
+4. Make sure you have the necessary permissions in the channel
+5. Use responsibly and in accordance with Telegram's terms of service
+
 ## Development
 
-For development with auto-reload:
-```bash
-npm run dev
-```
-
-## Custom API Server
-
-The bot supports using a custom API server to remove Telegram's rate limits. To use this feature:
-
-1. Set up your custom API server
-2. Add the API server URL to your `.env` file:
-   ```
-   API_SERVER_URL=https://your-api-server.com
-   ```
-3. The bot will automatically use your custom API server for all requests
-
-If no custom API server is specified, the bot will use the default Telegram API server. 
+To modify the code:
+1. Edit the `bot.js` file
+2. Restart the bot with `npm start`
+3. For development with auto-reload, use `npm run dev` 
