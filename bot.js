@@ -5,7 +5,16 @@ import { handleDelall } from "./handleDellAll.js";
 dotenv.config();
 
 // Bot configuration
-const bot = new Telegraf(process.env.BOT_TOKEN);
+const bot = new Telegraf(process.env.BOT_TOKEN, {
+  telegram: {
+    apiRequestTimeout: 1800000,
+  },
+  handlerTimeout: 1800000,
+  client: {
+    timeout: 1800000,
+    timeoutErrorMessage: "Request timed out after 30 minutes",
+  },
+});
 
 // Store active clearing sessions
 export const activeSessions = new Map();
