@@ -148,14 +148,17 @@ async function deleteAllMessages(channelId, ctx) {
 
     // Status message
     const statusMsg = await ctx.reply("🗑️ Deleting messages: 0 deleted...");
+    const statusMsgIds = [statusMsg.message_id];
 
     // Get all message IDs using the userbot
     const messageIds = [];
     let offsetId = 0;
 
     // First, collect all message IDs
-    await ctx.reply("📊 Scanning channel for messages...");
+    const scanMsg = await ctx.reply("📊 Scanning channel for messages...");
+    statusMsgIds.push(scanMsg.message_id);
 
+    // Collect all message IDs
     while (true) {
       const messages = await client.invoke(
         new Api.messages.GetHistory({
@@ -173,13 +176,17 @@ async function deleteAllMessages(channelId, ctx) {
         break;
       }
 
+      // Filter out service messages which can't be deleted
       for (const msg of messages.messages) {
-        messageIds.push(msg.id);
+        if (msg.id) {
+          messageIds.push(msg.id);
+        }
       }
 
+      // Set offsetId to the OLDEST message in this batch
       offsetId = messages.messages[messages.messages.length - 1].id;
 
-      // Update scan progress every 1000 messages
+      // Update scan progress
       if (messageIds.length % 1000 === 0) {
         await bot.telegram.editMessageText(
           channelId,
@@ -188,8 +195,12 @@ async function deleteAllMessages(channelId, ctx) {
           `📊 Scanned ${messageIds.length} messages...`
         );
       }
-    }
 
+      // If we got less than the limit, we've reached the end
+      if (messages.messages.length < 100) {
+        break;
+      }
+    }
     await bot.telegram.editMessageText(
       channelId,
       statusMsg.message_id,
@@ -238,6 +249,22 @@ async function deleteAllMessages(channelId, ctx) {
       channelId,
       `✅ Deletion complete! Total messages deleted: ${deletedCount}.`
     );
+
+    // Wait a moment so user can see the completion message
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Delete all status messages including this one
+    try {
+      await client.invoke(
+        new Api.channels.DeleteMessages({
+          channel: channel,
+          id: statusMsgIds,
+        })
+      );
+      console.log("Status messages deleted");
+    } catch (error) {
+      console.error("Error deleting status messages:", error);
+    }
   } catch (error) {
     console.error("Error during message deletion:", error);
     throw error;
