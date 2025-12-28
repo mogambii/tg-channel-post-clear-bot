@@ -8,9 +8,9 @@ async function generateSession() {
     console.log('Starting session generation...');
     
         // Get API credentials
-        const apiId = process.env.API_ID;
-    const apiHash = process.env.API_HASH;
-    
+        const apiId = process.env.TELEGRAM_API_ID;
+    const apiHash = process.env.TELEGRAM_API_HASH;
+
     // Create a new client
     const client = new TelegramClient(
         new StringSession(''), // Empty string for new session
