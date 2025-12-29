@@ -45,7 +45,19 @@ bot.on("channel_post", async (ctx) => {
   if (!text) return;
 
   if (text.startsWith("/delall")) {
-    await handleDelall(ctx, ctx.channelPost);
+    // Send immediate acknowledgment
+    await ctx.reply("🚀 Starting message deletion process...");
+
+    // Run the deletion process in the background without blocking
+    handleDelall(ctx, ctx.channelPost).catch((err) => {
+      console.error("Error in background deletion process:", err);
+      ctx
+        .reply(`❌ Error during deletion: ${err.message}`)
+        .catch(console.error);
+    });
+
+    // Return immediately to keep bot responsive
+    return;
   } else if (text.startsWith("/start")) {
     await ctx.reply(
       "Welcome! Use /delall in this channel to clear all messages.\n\n" +
