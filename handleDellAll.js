@@ -76,23 +76,29 @@ async function checkAdminRights(channelId, ctx) {
       return;
     }
 
-    if (userbotmember.status === "administrator") {
-      if (!userbotmember.can_delete_messages) {
-        await ctx.reply(
-          "⚠️ Userbot (@kenyanguy22) is an admin but lacks delete permissions.\n\n" +
-            "Please grant @kenyanguy22 the following permission:\n" +
-            "• Delete messages\n\n" +
-            "Then run /delall again."
-        );
-        return;
-      }
-
-      // All checks passed, proceed with deletion
+    if (userbotmember.status !== "administrator") {
       await ctx.reply(
-        "✅ All permissions verified. Starting message deletion..."
+        "❌ Userbot (@kenyanguy22) is not an admin in this channel.\n\n" +
+          "Please ensure @kenyanguy22 is promoted to admin with delete message permissions."
       );
-      await deleteAllMessages(channelId, ctx);
+      return;
     }
+
+    if (!userbotmember.can_delete_messages) {
+      await ctx.reply(
+        "⚠️ Userbot (@kenyanguy22) is an admin but lacks delete permissions.\n\n" +
+          "Please grant @kenyanguy22 the following permission:\n" +
+          "• Delete messages\n\n" +
+          "Then run /delall again."
+      );
+      return;
+    }
+
+    // All checks passed, proceed with deletion
+    await ctx.reply(
+      "✅ All permissions verified. Starting message deletion..."
+    );
+    await deleteAllMessages(channelId, ctx);
   } catch (error) {
     console.error("Error checking admin rights:", error);
     console.error("Error stack:", error.stack);
